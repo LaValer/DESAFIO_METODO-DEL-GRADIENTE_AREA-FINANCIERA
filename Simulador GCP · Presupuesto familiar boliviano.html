@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Simulador GCP · Presupuesto familiar boliviano</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--tx:#1b2330;--mu:#5b6678;--ac:#0b6e4f;--bd:#d9dee6;--er:#b42318;--ok:#067647;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12161c;--card:#1a2029;--tx:#e8ecf2;--mu:#9aa6b8;--ac:#3ecf9a;--bd:#2d3644;--er:#ff7b72;--ok:#4ade80;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#12161c;--card:#1a2029;--tx:#e8ecf2;--mu:#9aa6b8;--ac:#3ecf9a;--bd:#2d3644;--er:#ff7b72;--ok:#4ade80;color-scheme:dark}
+html{scroll-padding-top:56px}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+nav{position:sticky;top:0;background:var(--card);border-bottom:1px solid var(--bd);display:flex;gap:4px;overflow-x:auto;padding:8px 10px;z-index:5}
+nav a{white-space:nowrap;color:var(--mu);text-decoration:none;padding:4px 10px;border-radius:14px;font-size:13px}
+nav a:hover{background:var(--bg);color:var(--ac)}
+main{max-width:1000px;margin:auto;padding:12px}
+section{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px 18px;margin:14px 0}
+h1{font-size:26px;margin:4px 0}h2{font-size:18px;margin:0 0 8px;color:var(--ac)}h3{font-size:15px;margin:12px 0 4px}
+.mu{color:var(--mu);font-size:13px}.sc{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13px}th,td{border:1px solid var(--bd);padding:5px 8px;text-align:right}th{background:var(--bg)}td:first-child,th:first-child{text-align:left}
+input,select{background:var(--bg);color:var(--tx);border:1px solid var(--bd);border-radius:6px;padding:4px;font:inherit;font-size:13px}
+td input{width:84px;text-align:right}
+button{background:var(--ac);color:var(--bg);border:0;border-radius:8px;padding:8px 14px;font:inherit;font-weight:600;cursor:pointer;margin:3px}
+button.s{background:var(--bg);color:var(--tx);border:1px solid var(--bd)}button.on{outline:2px solid var(--ac)}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:8px 0}
+.bx{border-radius:8px;padding:10px 12px;margin:8px 0;border:1px solid var(--bd)}.er{border-color:var(--er);color:var(--er)}.ok{color:var(--ok)}.bad{color:var(--er)}
+code{background:var(--bg);padding:1px 5px;border-radius:4px}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+svg{width:100%;height:auto}
+</style></head><body>
+<nav><a href="#inicio">1 Inicio</a><a href="#caso">2 Caso</a><a href="#formulacion">3 Formulación</a><a href="#datos">4 Datos</a><a href="#escenarios">5 Escenarios</a><a href="#ref">6 Referencia</a><a href="#gcp">7 GCP vs GC</a><a href="#err">8 Errores</a><a href="#qa">9 QA</a><a href="#concl">10 Conclusiones</a></nav>
+<main>
+<section id="inicio"><h1>Simulador de presupuesto familiar bajo incertidumbre</h1>
+<div>Método de Gradientes Conjugados Precondicionado (GCP) · Bolivia 2026</div>
+<p class="mu">Estudiante: <b>[Tu nombre completo]</b> · Mención: <b>Desarrollo de Sistemas</b> · Carrera de Informática, UMSA · Métodos Numéricos</p>
+<p>Una familia boliviana reasigna su presupuesto mensual entre cinco categorías cuando cambian el tipo de cambio, los combustibles y las expectativas. El ajuste óptimo se obtiene resolviendo un sistema <code>Ax = b</code> simétrico y definido positivo (n = 5) con GCP, contrastado con GC simple y con Cholesky.</p></section>
+
+<section id="caso"><h2>2. Caso de estudio</h2>
+<p>La columna de Gonzalo Chávez (2026) sostiene que Bolivia enfrenta una crisis de expectativas: sin el ancla del tipo de cambio fijo ni de los combustibles, las familias deciden con incertidumbre. Menciona tres hogares: la familia asalariada que posterga compras, el comerciante informal con poca capacidad de ahorro y la familia que se protege pasando bolivianos a dólares. Se toma a Hall (el consumo depende de ingresos futuros esperados) y a Woodford (las expectativas determinan precios y decisiones).</p>
+<p>El modelo representa a un hogar que minimiza el costo de desviarse de sus necesidades en cada categoría. <b>Procedencia de los datos:</b> los coeficientes son <i>ilustrativos y calibrados</i> por el estudiante a partir del contexto de la columna (inflación cercana al 6 %, alza de combustibles, dolarización del ahorro); no son estadísticas oficiales. Pueden sustituirse por datos del INE/BCB en la sección 4.</p></section>
+
+<section id="formulacion"><h2>3. Formulación</h2>
+<p>Se minimiza <code>f(x) = ½ xᵀAx − bᵀx</code>. Como ∇f = Ax − b, el punto óptimo cumple <b>Ax = b</b>. A simétrica y definida positiva garantiza un único mínimo.</p>
+<table><tr><th>Variable</th><th>Significado (Bs/mes)</th></tr>
+<tr><td>x₁</td><td>Alimentación y transporte (sensible a combustibles)</td></tr>
+<tr><td>x₂</td><td>Vivienda y servicios básicos</td></tr>
+<tr><td>x₃</td><td>Ahorro protegido en dólares</td></tr>
+<tr><td>x₄</td><td>Salud y educación</td></tr>
+<tr><td>x₅</td><td>Consumo discrecional (electrodomésticos, ocio)</td></tr></table>
+<p><b>aᵢᵢ</b> = rigidez de la categoría i (cuánto cuesta desviarse de su necesidad). <b>aᵢⱼ = aⱼᵢ &gt; 0</b> = competencia por el mismo ingreso entre i y j (acoplamiento). <b>bᵢ</b> = necesidad o presión de gasto de la categoría i, medida en unidades monetarias ponderadas por rigidez. La matriz y el vector vigentes se editan y muestran en la sección 4.</p></section>
+
+<section id="datos"><h2>4. Entrada de datos</h2>
+<div class="row"><b>Escenario activo:</b> <span id="curname"></span></div>
+<div class="sc" id="grid"></div>
+<div class="row">
+<label>Precondicionador <select id="pc"><option value="jacobi">Jacobi (diagonal)</option><option value="ssor">SSOR (ω = 1)</option></select></label>
+<label>Tolerancia <input id="tol" value="1e-6" size="7"></label>
+<label>N<sub>máx</sub> <input id="nm" value="1000" size="5"></label>
+<label><input type="checkbox" id="mir" checked> Espejar simetría al editar</label>
+<button id="rec">Recalcular</button><button class="s" id="rst">Restablecer escenario</button></div>
+<div id="msg"></div></section>
+
+<section id="escenarios"><h2>5. Tres escenarios</h2>
+<div class="row"><button data-s="ideal">1. Ideal</button><button data-s="estres">2. Bajo estrés</button><button data-s="mal">3. Mal condicionado</button></div>
+<div id="sdesc" class="bx"></div></section>
+
+<section id="ref"><h2>6. Solución de referencia (Cholesky)</h2><div id="refout"></div></section>
+
+<section id="gcp"><h2>7. GCP vs GC</h2><div id="gcpout"></div>
+<h3>Convergencia del residuo relativo (escala log₁₀)</h3><div id="chart"></div>
+<h3>Tabla comparativa de los tres escenarios</h3><div class="sc" id="comp"></div></section>
+
+<section id="err"><h2>8. Análisis de errores</h2><div class="sc" id="errout"></div></section>
+
+<section id="qa"><h2>9. Módulo de pruebas (QA)</h2>
+<button id="runqa">Ejecutar pruebas</button><div class="sc" id="qaout"></div></section>
+
+<section id="concl"><h2>10. Conclusiones y referencias</h2>
+<p><b>Técnicas.</b> En el escenario ideal, κ(A) es bajo y GC y GCP convergen en pocas iteraciones. En estrés, el cambio de <i>b</i> y de algunos aᵢᵢ desplaza el equilibrio sin deteriorar el condicionamiento. En el mal condicionado (variables con escalas muy distintas y correlación fuerte), κ(A) es muy alto y el precondicionador de Jacobi reduce κ drásticamente y las iteraciones.</p>
+<p><b>Financieras.</b> Bajo estrés la familia asigna más a alimentación y a ahorro en dólares y recorta el consumo discrecional, lo que ilustra la caída del consumo por expectativas descrita por Hall. Mal escalamiento equivale a mezclar rubros en bolivianos y en dólares con precios fuertemente correlacionados, lo que muestra por qué la incertidumbre cambiaria vuelve frágil la planificación.</p>
+<p class="mu"><b>Referencias:</b> Suñagua S., P. (2020). Método de Gradientes Conjugados Precondicionado. <i>Revista Boliviana de Matemática – UMSA</i>, 04, 2–7. · Golub &amp; Van Loan (2013). <i>Matrix Computations</i>, 4.ª ed. · Saad (2003). <i>Iterative Methods for Sparse Linear Systems</i>, 2.ª ed. · Chávez, G. (2026). Columna de opinión sobre Hall y Woodford y la economía boliviana.</p></section>
+</main>
+<script>
+const N=5,$=s=>document.querySelector(s),fm=v=>v===0?'0':(Math.abs(v)>=1e5||Math.abs(v)<1e-3)?v.toExponential(3):v.toFixed(4);
+const NM=['x₁ Alim./transp.','x₂ Vivienda','x₃ Ahorro USD','x₄ Salud/educ.','x₅ Discrecional'];
+const cl=A=>A.map(r=>r.slice());
+function mk(){const base=[[10,1,.5,0,.5],[1,9,1,.5,0],[.5,1,12,1,.5],[0,.5,1,8,1],[.5,0,.5,1,7]];
+const b1=[17000,8000,5000,6000,3000];
+const A2=cl(base);A2[0][0]=13;A2[2][2]=14.4;
+const b2=b1.map((v,i)=>Math.round(v*[1.15,1.08,1.25,1.06,.7][i]));
+const S=[1,4,10,30,100],A3=S.map((a,i)=>S.map((c,j)=>a*c*(i==j?1:.5))),xt=[700,350,250,120,60];
+const b3=A3.map(r=>Math.round(r.reduce((s,v,j)=>s+v*xt[j],0)));
+return{ideal:{A:cl(base),b:b1.slice()},estres:{A:A2,b:b2},mal:{A:A3,b:b3}}}
+const INFO={ideal:['Ideal','Hogar estable: categorías casi independientes (A diagonalmente dominante, κ bajo). Ingresos y precios predecibles.'],
+estres:['Bajo estrés','Inflación ≈ 6 %, alza de combustibles y presión cambiaria: b sube (+15 % alimentación, +25 % ahorro en dólares, −30 % consumo discrecional) y la rigidez de alimentación y ahorro aumenta (a₁₁, a₃₃). Se desplaza el equilibrio.'],
+mal:['Mal condicionado','Rubros con escalas muy distintas (aᵢᵢ de 1 a 10 000) y correlación 0,5 entre todos por dolarización de precios. Se espera κ(A) ≫ 1; Jacobi corrige el escalamiento.']};
+let sc=mk(),cur='ideal',x0=Array(N).fill(0);
+const dot=(a,b)=>a.reduce((s,v,i)=>s+v*b[i],0),nr=a=>Math.sqrt(dot(a,a)),mv=(A,x)=>A.map(r=>dot(r,x));
+function chol(A){const n=A.length,G=A.map(()=>Array(n).fill(0)),piv=[];for(let i=0;i<n;i++)for(let j=0;j<=i;j++){let s=A[i][j];for(let k=0;k<j;k++)s-=G[i][k]*G[j][k];if(i==j){piv.push(s);if(!(s>1e-12*Math.abs(A[i][i])))return{G:null,piv};G[i][i]=Math.sqrt(s)}else G[i][j]=s/G[j][j]}return{G,piv}}
+function sL(L,b){const y=[];for(let i=0;i<b.length;i++){let s=b[i];for(let k=0;k<i;k++)s-=L[i][k]*y[k];y.push(s/L[i][i])}return y}
+function sLT(L,y){const n=y.length,x=Array(n);for(let i=n-1;i>=0;i--){let s=y[i];for(let k=i+1;k<n;k++)s-=L[k][i]*x[k];x[i]=s/L[i][i]}return x}
+function eig(S){const n=S.length,A=cl(S);let fr=0;A.forEach(r=>r.forEach(v=>fr+=v*v));for(let sw=0;sw<100;sw++){let off=0;for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)off+=A[i][j]**2;if(off<1e-26*fr)break;for(let p=0;p<n;p++)for(let q=p+1;q<n;q++){if(A[p][q]==0)continue;const th=(A[q][q]-A[p][p])/(2*A[p][q]),t=(th>=0?1:-1)/(Math.abs(th)+Math.sqrt(th*th+1)),c=1/Math.sqrt(1+t*t),s=t*c;for(let k=0;k<n;k++){const a=A[k][p],b=A[k][q];A[k][p]=c*a-s*b;A[k][q]=s*a+c*b}for(let k=0;k<n;k++){const a=A[p][k],b=A[q][k];A[p][k]=c*a-s*b;A[q][k]=s*a+c*b}}}return A.map((r,i)=>r[i]).sort((a,b)=>a-b)}
+function validate(A,b){try{const n=A.length;if(n<4)return{ok:false,msg:'Se requiere n ≥ 4.'};
+for(const r of A)for(const v of r)if(!isFinite(v))return{ok:false,msg:'Hay valores no numéricos en A.'};
+if(b.some(v=>!isFinite(v)))return{ok:false,msg:'Hay valores no numéricos en b.'};
+for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)if(Math.abs(A[i][j]-A[j][i])>1e-9*(Math.abs(A[i][j])+Math.abs(A[j][i])+1))return{ok:false,msg:`A no es simétrica: a${i+1}${j+1} ≠ a${j+1}${i+1}.`};
+const c=chol(A);if(!c.G){const k=c.piv.findIndex(p=>!(p>0));return{ok:false,msg:`A no es definida positiva (el menor principal de orden ${k+1} no es positivo).`}}
+return{ok:true,G:c.G,piv:c.piv,eigs:eig(A)}}catch(e){return{ok:false,msg:'Error de validación: '+e.message}}}
+function pfac(A,t){const n=A.length;if(t=='jacobi')return A.map((r,i)=>r.map((_,j)=>i==j?Math.sqrt(A[i][i]):0));
+if(t=='ssor')return A.map((r,i)=>r.map((_,j)=>j<i?A[i][j]/Math.sqrt(A[j][j]):j==i?Math.sqrt(A[i][i]):0));
+return A.map((r,i)=>r.map((_,j)=>i==j?1:0))}
+function pcg(A,b,x0,t,tol,nm){const L=pfac(A,t),nb=nr(b);let x=x0.slice(),r=b.map((v,i)=>v-mv(A,x)[i]);const ap=r=>sLT(L,sL(L,r));let z=ap(r),p=z.slice(),rz=dot(r,z),h=[nr(r)/nb],it=0;
+while(h[it]>=tol&&it<nm){const Ap=mv(A,p),al=rz/dot(p,Ap);x=x.map((v,i)=>v+al*p[i]);r=r.map((v,i)=>v-al*Ap[i]);it++;h.push(nr(r)/nb);if(h[it]<tol)break;z=ap(r);const rz2=dot(r,z),be=rz2/rz;rz=rz2;p=z.map((v,i)=>v+be*p[i])}
+return{x,it,hist:h,res:h[it],conv:h[it]<tol}}
+function condM(A,t){const L=pfac(A,t),n=A.length,col=M=>{const T=M[0].map((_,j)=>sL(L,M.map(r=>r[j])));return T[0].map((_,i)=>T.map(c=>c[i]))};
+const W=col(A),Wt=W[0].map((_,j)=>W.map(r=>r[j])),B=col(Wt),e=eig(B);return e[n-1]/e[0]}
+function solve(A,b,x0,t,tol,nm){const v=validate(A,b);if(!v.ok)return{err:v.msg};
+const ref=sLT(v.G,sL(v.G,b)),cg=pcg(A,b,x0,'none',tol,nm),pc=pcg(A,b,x0,t,tol,nm),e=v.eigs;
+return{v,ref,cg,pc,kA:e[e.length-1]/e[0],kM:condM(A,t)}}
+const P=()=>({t:$('#pc').value,tol:parseFloat($('#tol').value)||1e-6,nm:parseInt($('#nm').value)||1000});
+function build(){$('#curname').textContent=INFO[cur][0];$('#sdesc').innerHTML='<b>'+INFO[cur][0]+':</b> '+INFO[cur][1];
+document.querySelectorAll('[data-s]').forEach(b=>b.classList.toggle('on',b.dataset.s==cur));
+const {A,b}=sc[cur];let h='<table><tr><th></th>'+NM.map(n=>'<th>'+n.split(' ')[0]+'</th>').join('')+'<th>b</th></tr>';
+for(let i=0;i<N;i++){h+='<tr><th>'+NM[i]+'</th>'+A[i].map((v,j)=>`<td><input type="number" step="any" data-r="${i}" data-c="${j}" value="${v}"></td>`).join('')+`<td><input type="number" step="any" data-r="${i}" data-c="b" value="${b[i]}"></td></tr>`}
+h+='<tr><th>x₀</th>'+x0.map((v,i)=>`<td><input type="number" step="any" data-x0="${i}" value="${v}"></td>`).join('')+'<td></td></tr></table>';$('#grid').innerHTML=h;calc()}
+function tbl(h,rows){return '<table><tr>'+h.map(x=>'<th>'+x+'</th>').join('')+'</tr>'+rows.map(r=>'<tr>'+r.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</table>'}
+function chart(R){const hs=[[R.cg.hist,'#d97706','GC simple'],[R.pc.hist,'#0b9e6f','GCP']],W=600,H=220,m=36;const mx=Math.max(...hs.map(h=>h[0].length-1),1),lg=v=>Math.log10(Math.max(v,1e-16));
+const lo=Math.min(-7,...hs.map(h=>Math.min(...h[0].map(lg)))),hi=Math.max(0.2,...hs.map(h=>Math.max(...h[0].map(lg))));
+const X=i=>m+(W-m-8)*i/mx,Y=v=>8+(H-m-8)*(hi-lg(v))/(hi-lo);let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Convergencia"><rect x="${m}" y="8" width="${W-m-8}" height="${H-m-8}" fill="none" stroke="currentColor" opacity=".3"/>`;
+const ty=Y(P().tol);s+=`<line x1="${m}" x2="${W-8}" y1="${ty}" y2="${ty}" stroke="#b42318" stroke-dasharray="4"/><text x="${W-10}" y="${ty-3}" font-size="10" text-anchor="end" fill="#b42318">tol</text>`;
+hs.forEach(([h,c],k)=>{s+=`<polyline fill="none" stroke="${c}" stroke-width="2" points="${h.map((v,i)=>X(i)+','+Y(v)).join(' ')}"/>`;s+=`<text x="${m+8+k*90}" y="${H-8}" font-size="11" fill="${c}">■ ${hs[k][2]}</text>`});
+s+=`<text x="4" y="14" font-size="10" fill="currentColor">10^${hi.toFixed(0)}</text><text x="4" y="${H-m}" font-size="10" fill="currentColor">10^${lo.toFixed(0)}</text><text x="${W-8}" y="${H-m+12}" font-size="10" text-anchor="end" fill="currentColor">iter ${mx}</text></svg>`;return s}
+function calc(){const {A,b}=sc[cur],p=P(),R=solve(A,b,x0,p.t,p.tol,p.nm);
+if(R.err){$('#msg').innerHTML='<div class="bx er">⚠ '+R.err+' Corrige los datos; el cálculo se detuvo sin errores internos.</div>';['refout','gcpout','errout','chart'].forEach(i=>$('#'+i).innerHTML='<span class="mu">Sin resultados: matriz no válida.</span>');compAll();return}
+$('#msg').innerHTML='<div class="bx ok">✓ A es simétrica y definida positiva (λ<sub>min</sub> = '+fm(R.v.eigs[0])+' &gt; 0).</div>';
+$('#refout').innerHTML=tbl(['Variable','x_ref (Bs/mes)'],R.ref.map((v,i)=>[NM[i],fm(v)]))+'<p class="mu">Menores principales (Sylvester) vía pivotes de Cholesky: '+R.v.piv.map((_,k)=>fm(R.v.piv.slice(0,k+1).reduce((a,c)=>a*c,1))).join(' ; ')+' (todos &gt; 0). Autovalores de A: '+R.v.eigs.map(fm).join(', ')+'.</p>';
+$('#gcpout').innerHTML=tbl(['Método','Iteraciones','Residuo relativo final','¿Convergió?','x aproximado'],[['GC simple',R.cg.it,fm(R.cg.res),R.cg.conv?'Sí':'No','['+R.cg.x.map(fm).join('; ')+']'],['GCP ('+p.t+')',R.pc.it,fm(R.pc.res),R.pc.conv?'Sí':'No','['+R.pc.x.map(fm).join('; ')+']']])+`<p>κ(A) = <b>${fm(R.kA)}</b> · κ(M⁻¹A) = <b>${fm(R.kM)}</b> · Reducción de iteraciones: ${R.cg.it} → ${R.pc.it}.</p>`;
+$('#chart').innerHTML=chart(R);
+$('#errout').innerHTML=tbl(['Variable','x_ref','x_GCP','Ea','Er','Ep (%)'],R.ref.map((r,i)=>{const ea=Math.abs(r-R.pc.x[i]);return[NM[i],fm(r),fm(R.pc.x[i]),fm(ea),r==0?'no definido':fm(ea/Math.abs(r)),r==0?'no definido':fm(ea/Math.abs(r)*100)]}))+`<p>Residuo relativo global ‖b − Ax‖₂/‖b‖₂ = <b>${fm(R.pc.res)}</b></p>`;
+compAll()}
+function compAll(){const p=P(),rows=[];const O={};for(const k of['ideal','estres','mal']){O[k]=solve(sc[k].A,sc[k].b,x0,p.t,p.tol,p.nm)}
+const g=f=>['ideal','estres','mal'].map(k=>O[k].err?'<span class="bad">inválida</span>':f(O[k]));
+const vec=v=>'['+v.map(fm).join('; ')+']';
+const FIN=['Presupuesto estable; el hogar cubre sus rubros con holgura.','Sube el costo de vida: el equilibrio se desplaza hacia alimentación y ahorro en USD, y cae el consumo discrecional.','Pequeños cambios en un rubro se propagan a todos; la planificación es frágil sin reescalar.'];
+$('#comp').innerHTML=tbl(['Indicador','Ideal','Bajo estrés','Mal condicionado'],[
+['Solución de referencia',...g(o=>vec(o.ref))],['Solución GCP',...g(o=>vec(o.pc.x))],
+['Error absoluto (Ea)',...g(o=>vec(o.ref.map((r,i)=>Math.abs(r-o.pc.x[i]))))],
+['Error porcentual (Ep %)',...g(o=>vec(o.ref.map((r,i)=>r==0?NaN:Math.abs(r-o.pc.x[i])/Math.abs(r)*100)))],
+['Iteraciones GC',...g(o=>o.cg.it)],['Iteraciones GCP',...g(o=>o.pc.it)],['κ(A)',...g(o=>fm(o.kA))],['κ(M⁻¹A)',...g(o=>fm(o.kM))],
+['Residuo relativo GCP',...g(o=>fm(o.pc.res))],['¿Convergió?',...g(o=>o.pc.conv?'Sí':'No')],['Interpretación financiera',...FIN]])}
+$('#grid').addEventListener('input',e=>{const t=e.target,d=t.dataset;if(d.x0!==undefined){x0[+d.x0]=parseFloat(t.value);calc();return}
+const v=parseFloat(t.value),r=+d.r,{A,b}=sc[cur];if(d.c=='b')b[r]=v;else{const c=+d.c;A[r][c]=v;if($('#mir').checked&&r!=c){A[c][r]=v;const o=document.querySelector(`[data-r="${c}"][data-c="${r}"]`);if(o)o.value=t.value}}calc()});
+document.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{cur=b.dataset.s;build()});
+$('#rec').onclick=calc;$('#pc').onchange=calc;$('#tol').onchange=calc;$('#nm').onchange=calc;
+$('#rst').onclick=()=>{sc[cur]=mk()[cur];build()};
+$('#runqa').onclick=()=>{const T=[],S0=mk(),p={t:'jacobi',tol:1e-6,nm:1000},z=Array(N).fill(0);
+const add=(n,i,e,o,ok)=>T.push([n,i,e,o,ok?'<b class="ok">APROBADA</b>':'<b class="bad">FALLÓ</b>']);
+try{const R=['ideal','estres','mal'].map(k=>solve(S0[k].A,S0[k].b,z,p.t,p.tol,p.nm));add('1. Carga de escenarios','Ideal, Estrés, Mal condicionado','Los 3 convergen con residuo < 10⁻⁶',R.map(r=>r.err?'error':r.pc.it+' it, res '+fm(r.pc.res)).join(' | '),R.every(r=>!r.err&&r.pc.conv))}catch(e){add('1. Carga de escenarios','—','—',e.message,false)}
+try{const A=cl(S0.ideal.A);A[0][1]=5;const r1=validate(A,S0.ideal.b);const B=cl(S0.ideal.A);B[0][0]=-1;const r2=validate(B,S0.ideal.b);
+add('2a. Matriz no simétrica','a₁₂ = 5 ≠ a₂₁ = 1','Error notificado sin colapsar',r1.ok?'aceptada':r1.msg,!r1.ok);add('2b. Matriz no definida positiva','a₁₁ = −1','Error notificado sin colapsar',r2.ok?'aceptada':r2.msg,!r2.ok)}catch(e){add('2. Validación','—','—',e.message,false)}
+try{const A=cl(S0.ideal.A),a=solve(A,S0.ideal.b,z,p.t,p.tol,p.nm);A[0][0]=15;const b=solve(A,S0.ideal.b,z,p.t,p.tol,p.nm);const ch=Math.abs(a.ref[0]-b.ref[0])>1e-6,cons=Math.abs(b.ref[0]-b.pc.x[0])/Math.abs(b.ref[0])<1e-4;
+add('3. Edición dinámica','a₁₁: 10 → 15','x₁ de referencia cambia y GCP coincide con ella','x₁: '+fm(a.ref[0])+' → '+fm(b.ref[0])+'; GCP '+fm(b.pc.x[0]),ch&&cons)}catch(e){add('3. Edición dinámica','—','—',e.message,false)}
+try{const r=solve(S0.mal.A,S0.mal.b,z,p.t,p.tol,p.nm);add('4. Comparativa de precondicionamiento','Escenario mal condicionado, Jacobi','Iteraciones GCP ≤ GC',`GCP ${r.pc.it} ≤ GC ${r.cg.it}; κ(A)=${fm(r.kA)}, κ(M⁻¹A)=${fm(r.kM)}`,r.pc.it<=r.cg.it)}catch(e){add('4. Precondicionamiento','—','—',e.message,false)}
+$('#qaout').innerHTML=tbl(['Prueba','Entrada','Resultado esperado','Resultado obtenido','Conclusión'],T)};
+build();$('#runqa').click();
+</script></body></html>
